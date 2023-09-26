@@ -1,4 +1,5 @@
 import os
+import argparse
 from datetime import datetime
 
 def process_line(line):
@@ -25,8 +26,14 @@ def process_line(line):
     return cols[0].replace('"', ''), ",".join(new_cols) + "\n"
 
 def main():
+    parser = argparse.ArgumentParser(description='Merge CSV files.')
+    parser.add_argument('-n', '--name', default='merged', help='Name of the output file (default: merged)')
+    parser.add_argument('-d', '--delete', action='store_true', help='Delete input files after merging (default: False)')
+    args = parser.parse_args()
+    output_filename = f"{args.name}.csv"
+
     seen_cves = set()
-    with open("merged.csv", 'w', encoding='utf-8') as f_out:
+    with open(output_filename, 'w', encoding='utf-8') as f_out:
         f_out.write("clave_elector,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,sexo,calle,numero_interior,numero_exterior,colonia,codigo_postal,id_estado,d,numero_municipio,seccion,localidad,curp\n")
         
         for filename in os.listdir("input"):
@@ -39,6 +46,10 @@ def main():
                         if processed_line and cve not in seen_cves:
                             seen_cves.add(cve)
                             f_out.write(processed_line)
+
+                # Remove the input file after processing if -d flag is set
+                if args.delete:
+                    os.remove(os.path.join("input", filename))
 
 if __name__ == "__main__":
     main()
