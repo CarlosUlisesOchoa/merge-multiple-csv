@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 def process_line(line):
@@ -27,15 +28,17 @@ def main():
     seen_cves = set()
     with open("merged.csv", 'w') as f_out:
         f_out.write("clave_elector,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,sexo,calle,numero_interior,numero_exterior,colonia,codigo_postal,id_estado,d,numero_municipio,seccion,localidad,curp\n")
-        for file_name in ["1.csv", "2.csv"]:
-            with open(file_name, 'r') as f_in:
-                # Skip headers
-                next(f_in)
-                for line in f_in:
-                    cve, processed_line = process_line(line)
-                    if processed_line and cve not in seen_cves:
-                        seen_cves.add(cve)
-                        f_out.write(processed_line)
+        
+        for filename in os.listdir("input"):
+            if filename.endswith(".csv"):
+                with open(os.path.join("input", filename), 'r') as f_in:
+                    # Skip headers
+                    next(f_in)
+                    for line in f_in:
+                        cve, processed_line = process_line(line)
+                        if processed_line and cve not in seen_cves:
+                            seen_cves.add(cve)
+                            f_out.write(processed_line)
 
 if __name__ == "__main__":
     main()
