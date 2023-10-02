@@ -1,8 +1,3 @@
-Certainly! Below is a sample `README.md` file for your Python script:
-
----
-
-````markdown
 <div align="center">
   <h1>CSV Merger</h1>
   <img src="https://img.shields.io/badge/python-3.6%2B-blue" />
@@ -42,7 +37,6 @@ Open a terminal and navigate to the directory containing the script. Then, run t
 ```bash
 python csv_merger.py [OPTIONS]
 ```
-````
 
 ## Options
 
@@ -59,10 +53,10 @@ Let's say you have a directory `input` with the following CSV files:
 After running the command:
 
 ```bash
-python csv_merger.py -n "output" -d
+python csv_merger.py -n "final_version" -d
 ```
 
-An output file named `output.csv` will be created, and the input files will be deleted if the `-d` flag is set.
+An output file named `final_version.csv` will be created in the ouput directory, and the input files will be deleted if the `-d` flag is set.
 
 ## License
 
@@ -70,8 +64,6 @@ This project is released under the [MIT License](LICENSE).
 
 ## Contact
 
-For any issues or contributions, please feel free to [open an issue](https://github.com/YourUsername/csv-merger/issues).
-
-```
-
-```
+- Website [carlos8a.com](https://carlos8a.com)
+- GitHub [@CarlosUlisesOchoa](https://github.com/carlosulisesochoa)
+- X [@Carlos8aDev](https://twitter.com/carlos8adev)
