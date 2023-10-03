@@ -1,1 +1,9 @@
-merged.csv
+# Ignore everything in the input directory
+input/*
+
+# Ignore everything in the output directory
+output/*
+
+# But do not ignore sample.csv
+!input/sample1.csv
+!input/sample2.csv
