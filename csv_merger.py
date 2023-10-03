@@ -1,55 +1,60 @@
 import os
 import argparse
-from datetime import datetime
 
-def process_line(line):
+def process_line(line, num_expected_cols):
     line = line.strip()
     cols = line.split(",")
-
-    if len(cols) < 23:
+    
+    # Filter out lines with incorrect number of columns
+    if len(cols) != num_expected_cols:
         return None, None
-
-    try:
-        date_str = cols[5].replace('"', '').split(" ")[0]
-        date_obj = datetime.strptime(date_str, '%m/%d/%y')
-        
-        # Adjust year to be in the 20th century
-        if date_obj.year >= 2000:
-            date_obj = date_obj.replace(year=date_obj.year - 100)
-        
-        formatted_date = date_obj.strftime('%d/%m/%Y')
-    except:
-        formatted_date = ""
-
-    # Include "l" and "s" (indexed as 15 and 16) while skipping the "edad" (indexed as 1) and second-to-last columns (indexed as -2)
-    new_cols = [cols[0]] + cols[2:5] + [f'"{formatted_date}"'] + cols[6:15] + cols[15:17] + [cols[-1]]
-    return cols[0].replace('"', ''), ",".join(new_cols) + "\n"
+    
+    # Use the first column as a unique identifier for duplicate filtering
+    unique_id = cols[0].replace('"', '')
+    
+    return unique_id, line + "\n"
 
 def main():
     parser = argparse.ArgumentParser(description='Merge CSV files.')
     parser.add_argument('-n', '--name', default='merged', help='Name of the output file (default: merged)')
     parser.add_argument('-d', '--delete', action='store_true', help='Delete input files after merging (default: False)')
     args = parser.parse_args()
-    output_filename = f"{args.name}.csv"
+    
+    # Check if 'input' and 'output' directories exist, create if not
+    if not os.path.exists('input'):
+        os.makedirs('input')
+        
+    if not os.path.exists('output'):
+        os.makedirs('output')
+    
+    output_filename = os.path.join('output', f"{args.name}.csv")
+    seen_ids = set()
+    num_expected_cols = 0
+    header_written = False
 
-    seen_cves = set()
     with open(output_filename, 'w', encoding='utf-8') as f_out:
-        f_out.write("clave_elector,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,sexo,calle,numero_interior,numero_exterior,colonia,codigo_postal,id_estado,d,numero_municipio,seccion,localidad,curp\n")
         
         for filename in os.listdir("input"):
             if filename.endswith(".csv"):
                 with open(os.path.join("input", filename), 'r', encoding='utf-8') as f_in:
-                    # Skip headers
-                    next(f_in)
+                    
+                    # Read header
+                    header = f_in.readline().strip()
+                    if not header_written:
+                        f_out.write(header + "\n")
+                        header_written = True
+                        num_expected_cols = len(header.split(","))
+                    
+                    # Process lines
                     for line in f_in:
-                        cve, processed_line = process_line(line)
-                        if processed_line and cve not in seen_cves:
-                            seen_cves.add(cve)
+                        unique_id, processed_line = process_line(line, num_expected_cols)
+                        if processed_line and unique_id not in seen_ids:
+                            seen_ids.add(unique_id)
                             f_out.write(processed_line)
-
-                # Remove the input file after processing if -d flag is set
-                if args.delete:
-                    os.remove(os.path.join("input", filename))
+                            
+                    # Remove the input file after processing if -d flag is set
+                    if args.delete:
+                        os.remove(os.path.join("input", filename))
 
 if __name__ == "__main__":
     main()
