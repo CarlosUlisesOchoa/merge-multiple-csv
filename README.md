@@ -18,6 +18,7 @@ This Python script merges multiple CSV files by appending rows to a single outpu
 - [Usage](#usage)
 - [Options](#options)
 - [Example](#example)
+- [Contributing](#contributing)
 - [Contact](#contact)
 
 ## Prerequisites
@@ -56,6 +57,10 @@ python csv_merger.py -n "final_version" -d
 ```
 
 An output file named `final_version.csv` will be created in the ouput directory, and the input files will be deleted if the `-d` flag is set.
+
+## Contributing
+
+For contributing to this project, please feel free to [open an issue](https://github.com/CarlosUlisesOchoa/merge-multiple-csv/issues) or submit a pull request.
 
 ## Contact
 
